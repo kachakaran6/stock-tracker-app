@@ -10,6 +10,7 @@ import DashboardSummary from ".//components/DashboardSummary";
 import TransactionTable from ".//components/TransactionTable";
 import TransactionFormModal from ".//components/TransactionFormModal"; // Assuming a modal component
 import { PlusIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import ClockAndStatus from "./components/ClockAndStatus";
 
 export default function Home() {
   const { transactions, addTransaction, deleteTransaction } = useTransactions();
@@ -22,9 +23,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
-      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">
-        📈 Stock Tracker Dashboard
-      </h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-0 text-gray-900 dark:text-white">
+          📈 Stock Tracker Dashboard
+        </h1>
+        {/* New component placed here */}
+        <ClockAndStatus />
+      </div>
 
       {/* --- Dashboard Summary Cards --- */}
       <DashboardSummary analytics={analytics} />
