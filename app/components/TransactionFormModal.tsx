@@ -6,8 +6,8 @@ import { TransactionType } from "../src/types/Transaction"; // Make sure this is
 interface FormData {
   stockName: string;
   type: TransactionType;
-  quantity: number;
-  price: number;
+  quantity: number | string;
+  price: number | string;
   date: string;
 }
 
@@ -27,8 +27,8 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   const [formData, setFormData] = useState<FormData>({
     stockName: "",
     type: "Buy",
-    quantity: 0,
-    price: 0,
+    quantity: "",
+    price: "",
     date: defaultDate,
   });
 
@@ -44,19 +44,42 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     }));
   };
 
+  // Inside src/components/TransactionFormModal.tsx
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.stockName || formData.quantity <= 0 || formData.price <= 0) {
-      alert("Please fill in all required fields with valid values.");
+
+    // 1. Check if the string field is empty
+    if (!formData.stockName) {
+      alert("Please enter the Stock Name.");
       return;
     }
+
+    // 2. Check if the numerical fields are missing (empty string) or zero
+    // Since quantity and price are type 'number | string', checking for empty string ('')
+    // and ensuring the parsed number is greater than zero is the most robust validation.
+    const quantityNum = Number(formData.quantity);
+    const priceNum = Number(formData.price);
+
+    if (formData.quantity === "" || quantityNum <= 0) {
+      alert("Please enter a valid Quantity greater than zero.");
+      return;
+    }
+
+    if (formData.price === "" || priceNum <= 0) {
+      alert("Please enter a valid Price per share greater than zero.");
+      return;
+    }
+
+    // If all validation passes:
     onSave(formData);
+
     // Reset form after saving
     setFormData({
       stockName: "",
       type: "Buy",
-      quantity: 0,
-      price: 0,
+      quantity: "", // Use empty string to clear the input
+      price: "", // Use empty string to clear the input
       date: defaultDate,
     });
   };
@@ -86,6 +109,7 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                 name="stockName"
                 value={formData.stockName}
                 onChange={handleChange}
+                placeholder="Enter stock name"
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2"
               />
@@ -117,6 +141,7 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                 name="quantity"
                 value={formData.quantity}
                 onChange={handleChange}
+                placeholder="Enter quantity of Stock"
                 min="1"
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2"
@@ -133,8 +158,7 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                step="0.01"
-                min="0.01"
+                placeholder="Enter price of Stock"
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white p-2"
               />

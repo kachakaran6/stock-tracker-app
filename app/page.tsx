@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/page.tsx
 "use client";
 
@@ -67,7 +68,13 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={(data) => {
-          addTransaction(data);
+          const cleanedData = {
+            ...data,
+            quantity: Number(data.quantity) || 0,
+            price: Number(data.price) || 0,
+          };
+          addTransaction(cleanedData as any);
+
           setIsModalOpen(false);
         }}
       />
